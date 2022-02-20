@@ -1,47 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { nanoid } from 'nanoid';
-import toast, { Toaster } from 'react-hot-toast';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { Toaster } from 'react-hot-toast';
 import PhonebookForm from './components/PhonebookForm';
 import ContactsList from './components/ContactsList';
 import Filter from './components/Filter';
 import { Container, MainTitle, Title, Message } from './App.styled';
 
 function App() {
-  const [contacts, setContacts] = useState(() => {
-    return JSON.parse(window.localStorage.getItem('contacts')) ?? [];
-  });
-  const [filter, setFilter] = useState('');
+  const contacts = useSelector(({ contacts }) => contacts.items);
 
   useEffect(() => {
     window.localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
-
-  const addContact = ({ name, number }) => {
-    const contact = {
-      name,
-      number,
-      id: nanoid(),
-    };
-
-    contacts.some(contact => contact.name === name)
-      ? toast.error(`${name} is already in contacts`)
-      : setContacts(prevContacts => [...prevContacts, contact]);
-  };
-
-  const deleteContact = contactId => {
-    setContacts(contacts.filter(contact => contact.id !== contactId));
-    toast.success('Selected contact deleted');
-  };
-
-  const changeFilter = e => setFilter(e.currentTarget.value);
-
-  const getFilteredContacts = () => {
-    const normalizedFilter = filter.toLowerCase();
-
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter)
-    );
-  };
 
   return (
     <Container>
@@ -49,17 +19,14 @@ function App() {
         <Toaster />
       </div>
       <MainTitle>Phonebook</MainTitle>
-      <PhonebookForm onSubmit={addContact} />
+      <PhonebookForm />
       {contacts.length === 0 ? (
         <Message>Your phone book is empty, enter your first contact!</Message>
       ) : (
         <>
           <Title>Contacts</Title>
-          <Filter value={filter} onChange={changeFilter} />
-          <ContactsList
-            contacts={getFilteredContacts()}
-            onDeleteContact={deleteContact}
-          />
+          <Filter />
+          <ContactsList />
         </>
       )}
     </Container>

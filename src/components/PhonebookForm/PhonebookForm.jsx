@@ -1,17 +1,25 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { addItem } from '../../redux/contactsSlice';
+import { nanoid } from 'nanoid';
+import toast from 'react-hot-toast';
 import Button from '../Button';
 import { FormWrapper, Label, Input } from './PhonebookForm.styled';
 
 const INITIAL_STATE = '';
 
-function PhonebookForm({ onSubmit }) {
+function PhonebookForm() {
+  const dispatch = useDispatch();
+  const contacts = useSelector(({ contacts }) => contacts.items);
+
   const [name, setName] = useState(INITIAL_STATE);
   const [number, setNumber] = useState(INITIAL_STATE);
 
   const handleSubmit = e => {
     e.preventDefault();
-    onSubmit({ name, number });
+    contacts.some(contact => contact.name === name)
+      ? toast.error(`${name} is already in contacts`)
+      : dispatch(addItem({ name, number, id: nanoid() }));
     reset();
   };
 
@@ -66,9 +74,5 @@ function PhonebookForm({ onSubmit }) {
     </form>
   );
 }
-
-PhonebookForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-};
 
 export default PhonebookForm;
