@@ -2,9 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { CommonBtn } from './Button.styled';
 
-function Button({ label, onClick = () => null, type = 'button' }) {
+function Button({
+  label,
+  onClick = () => null,
+  type = 'button',
+  disabled = false,
+}) {
   return (
-    <CommonBtn type={type} onClick={onClick}>
+    <CommonBtn type={type} onClick={onClick} disabled={disabled}>
       {label}
     </CommonBtn>
   );

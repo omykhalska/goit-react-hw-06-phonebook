@@ -1,75 +1,83 @@
-import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '../../redux/contactsSlice';
 import { nanoid } from 'nanoid';
 import toast from 'react-hot-toast';
 import Button from '../Button';
-import { FormWrapper, Label, Input } from './PhonebookForm.styled';
-
-const INITIAL_STATE = '';
+import { FormWrapper, Label, Input, ErrorText } from './PhonebookForm.styled';
 
 function PhonebookForm() {
   const dispatch = useDispatch();
   const contacts = useSelector(({ contacts }) => contacts.items);
 
-  const [name, setName] = useState(INITIAL_STATE);
-  const [number, setNumber] = useState(INITIAL_STATE);
+  const {
+    register,
+    reset,
+    formState: { errors, isValid },
+    handleSubmit,
+  } = useForm({
+    mode: 'onChange',
+  });
 
-  const handleSubmit = e => {
-    e.preventDefault();
+  const onSubmit = ({ name, number }) => {
     contacts.some(contact => contact.name === name)
       ? toast.error(`${name} is already in contacts`)
       : dispatch(addItem({ name, number, id: nanoid() }));
     reset();
   };
 
-  const handleInputChange = e => {
-    const { name, value } = e.currentTarget;
-    switch (name) {
-      case 'name':
-        setName(value);
-        break;
-      case 'number':
-        setNumber(value);
-        break;
-      default:
-        return;
-    }
-  };
-
-  const reset = () => {
-    setName(INITIAL_STATE);
-    setNumber(INITIAL_STATE);
-  };
-
   return (
-    <form autoComplete="off" onSubmit={handleSubmit}>
+    <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
       <FormWrapper>
         <Label>
           Name
           <Input
             type="text"
-            name="name"
-            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-            title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-            required
-            value={name}
-            onChange={handleInputChange}
+            {...register('name', {
+              required: '❌ The field cannot be empty!',
+              pattern: {
+                value:
+                  /^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$/gi,
+                message:
+                  "❌ Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan",
+              },
+            })}
           />
         </Label>
+        <div>
+          {errors?.name && (
+            <ErrorText>
+              {errors?.name.message || 'An error has occurred...'}
+            </ErrorText>
+          )}
+        </div>
+
         <Label>
           Phone number
           <Input
             type="tel"
-            name="number"
-            pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-            title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-            required
-            value={number}
-            onChange={handleInputChange}
+            {...register('number', {
+              required: '❌ The field cannot be empty!',
+              pattern: {
+                value: /^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g,
+                message:
+                  '❌ Phone number must be digits and can contain spaces, dashes, parentheses and can start with +',
+              },
+              minLength: {
+                value: 5,
+                message: '❌ Phone number must contain 5 digits minimum',
+              },
+            })}
           />
         </Label>
-        <Button label="Add contact" type="submit" />
+        <div>
+          {errors?.number && (
+            <ErrorText>
+              {errors?.number.message || 'An error has occurred...'}
+            </ErrorText>
+          )}
+        </div>
+        <Button label="Add contact" type="submit" disabled={!isValid} />
       </FormWrapper>
     </form>
   );

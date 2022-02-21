@@ -12,6 +12,12 @@ export const CommonBtn = styled.button`
   cursor: pointer;
   transition: all 250ms ease-out;
 
+  &[disabled] {
+    pointer-events: none;
+    background-color: #cccccc;
+    opacity: 0.5;
+  }
+
   &:hover {
     background-color: #ade5e9;
   }
