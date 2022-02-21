@@ -59,7 +59,7 @@ function PhonebookForm() {
             {...register('number', {
               required: '❌ The field cannot be empty!',
               pattern: {
-                value: /^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g,
+                value: /^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s./0-9]*$/g,
                 message:
                   '❌ Phone number must be digits and can contain spaces, dashes, parentheses and can start with +',
               },
