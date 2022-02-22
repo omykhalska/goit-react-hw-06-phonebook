@@ -9,7 +9,6 @@ import { Container, MainTitle, Title, Message } from './App.styled';
 
 function App() {
   const contacts = useSelector(getItems);
-  console.log(contacts);
 
   useEffect(() => {
     window.localStorage.setItem('contacts', JSON.stringify(contacts));
