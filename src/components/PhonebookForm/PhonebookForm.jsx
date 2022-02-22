@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '../../redux/contactsSlice';
+import { getItems } from '../../redux/selectors';
 import { nanoid } from 'nanoid';
 import toast from 'react-hot-toast';
 import Button from '../Button';
@@ -8,7 +9,7 @@ import { FormWrapper, Label, Input, ErrorText } from './PhonebookForm.styled';
 
 function PhonebookForm() {
   const dispatch = useDispatch();
-  const contacts = useSelector(({ contacts }) => contacts.items);
+  const contacts = useSelector(getItems);
 
   const {
     register,
