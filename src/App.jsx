@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { getItems } from './redux/selectors';
 import { Toaster } from 'react-hot-toast';
