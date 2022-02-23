@@ -21,6 +21,7 @@ const persistConfig = {
 
 const contactsConfig = {
   key: 'contacts',
+  version: 1,
   storage,
   blacklist: ['filter'],
 };
